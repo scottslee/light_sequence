@@ -1,0 +1,15 @@
+1.0s: OFF
+7.0s: ON
+15.5s: OFF
+19.5s: ON
+20.5s: OFF
+24.5s: ON
+26.0s: OFF
+29.5s: ON
+34.0s: OFF
+38.0s: ON
+39.5s: OFF
+43.5s: ON
+46.0s: OFF
+50.0s: ON
+60.5s: OFF
