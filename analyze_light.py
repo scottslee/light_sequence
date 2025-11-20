@@ -50,11 +50,24 @@ def analyze_images():
     trend = None # 'increasing', 'decreasing', 'stable'
     THRESHOLD = 12 # Threshold to ignore noise
 
+    # Prepare table data
+    table_rows = []
+
+    # First row (no delta)
+    if brightness_data:
+        table_rows.append({
+            'time': brightness_data[0]['time'],
+            'brightness': brightness_data[0]['brightness'],
+            'delta': 0.0,
+            'classification': ''
+        })
+
     for i in range(1, len(brightness_data)):
         curr = brightness_data[i]
         prev = brightness_data[i-1]
 
         diff = curr['brightness'] - prev['brightness']
+        classification = ''
 
         if diff > THRESHOLD:
              current_trend = 'increasing'
@@ -65,23 +78,39 @@ def analyze_images():
 
         if current_trend == 'increasing':
             if trend != 'increasing':
-                events.append(f"{curr['time']}s: ON")
+                classification = 'ON'
             trend = 'increasing'
         elif current_trend == 'decreasing':
             if trend != 'decreasing':
-                events.append(f"{curr['time']}s: OFF")
+                classification = 'OFF'
             trend = 'decreasing'
         else:
             trend = 'stable'
+
+        table_rows.append({
+            'time': curr['time'],
+            'brightness': curr['brightness'],
+            'delta': diff,
+            'classification': classification
+        })
+
+        if classification:
+            events.append(f"{curr['time']}s: {classification}")
 
     # Print events
     for event in events:
         print(event)
 
-    # Save to file
+    # Save events to file
     with open('timelog.txt', 'w') as f:
         for event in events:
             f.write(event + '\n')
+
+    # Print Markdown Table
+    print("\n| Time | Brightness | Delta | Classification |")
+    print("|---|---|---|---|")
+    for row in table_rows:
+        print(f"| {row['time']:.1f}s | {row['brightness']:.2f} | {row['delta']:.2f} | {row['classification']} |")
 
 if __name__ == "__main__":
     analyze_images()
